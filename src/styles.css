@@ -891,3 +891,119 @@ table.data th {
 .app[data-tight='1'] .grid.campus {
   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
 }
+
+/* ==================== 手机 / 窄屏适配 ====================
+ * 触屏窄屏会自动打上 data-mobile（App.vue 检测），此时：
+ * · 不套用桌面缩放（--ui-scale = 1），单栏滚动，按钮加大到手指点得中；
+ * · 细节提示原本靠鼠标悬停，移动端改成点按（Tip.vue 里监听 touchstart）。
+ */
+.app[data-mobile='1'] .topbar {
+  padding: calc(8px + env(safe-area-inset-top)) 10px 8px;
+  gap: 8px;
+}
+
+.app[data-mobile='1'] .brand {
+  font-size: 15px;
+}
+
+.app[data-mobile='1'] .brand small {
+  display: none;
+}
+
+.app[data-mobile='1'] .layout {
+  padding: 8px;
+  gap: 8px;
+}
+
+.app[data-mobile='1'] .column {
+  gap: 8px;
+  padding-right: 0;
+  overscroll-behavior-y: contain;
+}
+
+.app[data-mobile='1'] .panel {
+  padding: 10px;
+}
+
+.app[data-mobile='1'] .grid.cols-2,
+.app[data-mobile='1'] .grid.cols-3,
+.app[data-mobile='1'] .grid.compact,
+.app[data-mobile='1'] .grid.teams {
+  grid-template-columns: 1fr;
+}
+
+.app[data-mobile='1'] .bottom-nav {
+  padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
+  gap: 4px;
+  /* 移动端用不透明底色，避免面板内容从半透明导航下面透出来 */
+  background: var(--bg-soft);
+  -webkit-overflow-scrolling: touch;
+}
+
+.app[data-mobile='1'] .nav-btn {
+  padding: 9px 11px;
+  font-size: 13px;
+}
+
+/* 手指点得中：小按钮在移动端统一抬高一点 */
+.app[data-mobile='1'] .btn {
+  padding: 8px 14px;
+}
+
+.app[data-mobile='1'] .btn.small {
+  padding: 6px 11px;
+  font-size: 13px;
+}
+
+.app[data-mobile='1'] .info-card {
+  padding: 10px 11px;
+}
+
+.app[data-mobile='1'] .modal-backdrop {
+  padding: 8px;
+}
+
+.app[data-mobile='1'] .modal {
+  padding: 14px;
+  border-radius: 12px;
+  max-height: 92%;
+}
+
+.app[data-mobile='1'] .toasts {
+  /* 顶栏在手机上会换行变高，通知往下挪，别盖住日期与评级 */
+  top: calc(84px + env(safe-area-inset-top));
+  left: 8px;
+  right: 8px;
+  width: auto;
+}
+
+/* iOS 下字号小于 16px 的输入框会在聚焦时把页面放大，这里统一抬到 16px */
+@media (max-width: 820px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+}
+
+/* 手机端顶栏只留最重要的几个状态 */
+.app[data-mobile='1'] .hide-mobile,
+.app[data-tight='1'] .hide-tight {
+  display: none !important;
+}
+
+/* 悬浮提示是 Teleport 到 body 的，用 body 上的 mobile-ui 类来适配 */
+body.mobile-ui .float-tip {
+  width: min(340px, calc(100vw - 20px)) !important;
+  max-width: calc(100vw - 20px);
+  font-size: 13px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-fade-enter-active,
+  .modal-fade-leave-active,
+  .modal-fade-enter-active .modal,
+  .modal-fade-leave-active .modal {
+    transition-duration: 0.01ms;
+  }
+}

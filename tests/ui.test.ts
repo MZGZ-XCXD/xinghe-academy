@@ -222,4 +222,26 @@ describe('界面运行时', () => {
     expect(wrapper.text()).toContain('175%')
     wrapper.unmount()
   })
+
+  it('手机 / 窄屏会自动切到移动版：不套用桌面缩放、单栏布局、标记 data-mobile', async () => {
+    const originalWidth = window.innerWidth
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 390 })
+    const wrapper = mount(App)
+    const engine = gameEngine()
+    // 桌面端玩家可能把倍率设成 175%，手机上不应该跟着放大
+    engine.state.settings.uiScale = 1.75
+    window.dispatchEvent(new Event('resize'))
+    await wrapper.vm.$nextTick()
+
+    const app = wrapper.find('.app')
+    expect(app.attributes('data-mobile')).toBe('1')
+    expect(app.attributes('data-narrow')).toBe('1')
+    expect(app.attributes('data-tight')).toBe('1')
+    expect(String(app.attributes('style'))).toContain('--ui-scale: 1')
+    // 悬浮提示在移动端靠 body 上的 mobile-ui 类适配（Teleport 到 body）
+    expect(document.body.classList.contains('mobile-ui')).toBe(true)
+
+    wrapper.unmount()
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: originalWidth })
+  })
 })

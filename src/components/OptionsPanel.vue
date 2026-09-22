@@ -216,7 +216,10 @@ function pickName(name: string) {
       >
         {{ Math.round(scale * 100) }}%
       </button>
-      <span class="small muted">高分屏（4K）建议 150% – 200%，效果等同于浏览器 Ctrl+滚轮缩放。</span>
+      <span class="small muted">
+        高分屏（4K）建议 150% – 200%，效果等同于浏览器 Ctrl+滚轮缩放。
+        手机 / 窄屏会自动切换移动版布局（单栏、按钮加大），此时不套用这里的倍率。
+      </span>
     </div>
     <div class="small muted" style="margin-top: 8px">
       1× 速度下 1 真实秒 ≈ 0.08 游戏日（1 游戏日约 12 秒现实时间，1 学年约 72 分钟）。可切换 1× / 2× / 5×；

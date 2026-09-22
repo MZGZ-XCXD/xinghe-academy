@@ -60,23 +60,51 @@ const pendingEvents = computed(() => state.events.active.length)
 const speedCtx = useSpeedContext()
 const hasOffer = computed(() => state.cards.offers.length > 0)
 const capacity = computed(() => studentCapacity(state, BUILDING_MAP, engine.mods))
-/** 界面缩放（等价于浏览器 Ctrl+滚轮缩放）：整块界面按倍率放大，字号与间距一起变大 */
-const uiScaleStyle = computed<Record<string, string>>(() => ({
-  '--ui-scale': String(Math.min(3, Math.max(0.75, Number(state.settings.uiScale) || 1))),
-}))
+
+/** 玩家在【选项】里设的界面倍率（等价于浏览器 Ctrl+滚轮缩放） */
+const userScale = computed(() => Math.min(3, Math.max(0.75, Number(state.settings.uiScale) || 1)))
+
+/**
+ * 是否按手机 / 触屏窄屏处理。
+ * 手机上一律用移动版布局（倍率 1），否则桌面默认的 175% 会把可用宽度压到 220px 左右，根本没法玩。
+ */
+const isMobile = ref(false)
+function detectMobile() {
+  if (typeof window === 'undefined') return
+  const coarse =
+    typeof window.matchMedia === 'function' ? window.matchMedia('(pointer: coarse)').matches : false
+  isMobile.value = window.innerWidth <= 820 || (coarse && window.innerWidth <= 1024)
+}
+
+/** 手机上强制 1×；桌面用玩家设置的倍率 */
+const uiScale = computed(() => (isMobile.value ? 1 : userScale.value))
+const uiScaleStyle = computed<Record<string, string>>(() => ({ '--ui-scale': String(uiScale.value) }))
 
 /** 缩放后的等效宽度决定要不要收成一栏（媒体查询在缩放后不可靠） */
 const viewportWidth = ref(typeof window === 'undefined' ? 1280 : window.innerWidth)
 function onResize() {
   viewportWidth.value = window.innerWidth
+  detectMobile()
 }
-onMounted(() => window.addEventListener('resize', onResize))
+onMounted(() => {
+  detectMobile()
+  window.addEventListener('resize', onResize)
+  window.addEventListener('orientationchange', onResize)
+})
 onBeforeUnmount(() => window.removeEventListener('resize', onResize))
-const effectiveWidth = computed(() => viewportWidth.value / (Number(state.settings.uiScale) || 1))
+onBeforeUnmount(() => window.removeEventListener('orientationchange', onResize))
+const effectiveWidth = computed(() => viewportWidth.value / uiScale.value)
 const layoutFlags = computed<Record<string, string | undefined>>(() => ({
   'data-narrow': effectiveWidth.value < 900 ? '1' : undefined,
   'data-tight': effectiveWidth.value < 640 ? '1' : undefined,
+  'data-mobile': isMobile.value ? '1' : undefined,
 }))
+
+// 悬浮提示是 Teleport 到 body 的，移动端样式需要挂在 body 上才生效
+watchEffect(() => {
+  if (typeof document === 'undefined') return
+  document.body.classList.toggle('mobile-ui', isMobile.value)
+})
 
 // 浏览器标签页标题跟随校名（改名后立即更新）
 watchEffect(() => {
@@ -111,7 +139,7 @@ function topRateLines(key: 'money' | 'teaching'): string[] {
         <span class="tag">{{ calendar.label }}</span>
         <span class="tag gold">评级 {{ state.school.rating.toFixed(1) }} · {{ engine.grade }}</span>
         <span class="tag">🎓 {{ fmt(totalStudents(state)) }} / {{ fmt(capacity) }}</span>
-        <span class="tag">🧑‍🏫 {{ totalTeachers(state) }}</span>
+        <span class="tag hide-tight">🧑‍🏫 {{ totalTeachers(state) }}</span>
         <span class="tag">
           <Tip
             :label="`💰 ${formatRealRate(rates.money.total, speedCtx)}（现实）`"
@@ -119,7 +147,7 @@ function topRateLines(key: 'money' | 'teaching'): string[] {
             :lines="topRateLines('money')"
           />
         </span>
-        <span class="tag">
+        <span class="tag hide-tight">
           <Tip
             :label="`📚 ${formatRealRate(rates.teaching.total, speedCtx)}（现实）`"
             title="教学资源收支（现实时间）"
@@ -189,7 +217,7 @@ function topRateLines(key: 'money' | 'teaching'): string[] {
         <span v-if="tab.id === 'events' && pendingEvents > 0" class="dot"></span>
         <span v-if="tab.id === 'campus' && hasOffer" class="dot"></span>
       </button>
-      <span class="muted small" style="margin-left: auto; align-self: center">
+      <span class="muted small hide-mobile" style="margin-left: auto; align-self: center">
         未解锁：{{ TABS.filter((t) => !state.ui.unlockedTabs.includes(t.id)).map((t) => t.label).join('、') || '全部已解锁' }}
       </span>
     </nav>

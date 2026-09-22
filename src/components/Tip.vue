@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 /**
  * 悬浮提示：内容渲染到 body（Teleport + fixed 定位），
@@ -53,7 +53,35 @@ function hide() {
   window.removeEventListener('resize', reposition)
 }
 
-onBeforeUnmount(hide)
+/**
+ * 触屏没有鼠标悬停：点一下切换提示。
+ * 点在卡片里的按钮 / 输入框上时不弹提示，免得挡住操作。
+ */
+function onTouchStart(event: TouchEvent) {
+  const target = event.target as HTMLElement | null
+  if (target?.closest('button, input, textarea, select, a')) return
+  if (visible.value) hide()
+  else show(event)
+}
+
+/** 点提示以外的地方就收起来 */
+function onDocumentPointerDown(event: PointerEvent) {
+  if (!visible.value) return
+  const target = event.target as Node | null
+  if (target && root.value?.contains(target)) return
+  hide()
+}
+
+onMounted(() => {
+  if (typeof document === 'undefined') return
+  document.addEventListener('pointerdown', onDocumentPointerDown, true)
+})
+
+onBeforeUnmount(() => {
+  hide()
+  if (typeof document === 'undefined') return
+  document.removeEventListener('pointerdown', onDocumentPointerDown, true)
+})
 </script>
 
 <template>
@@ -66,6 +94,7 @@ onBeforeUnmount(hide)
     @mouseleave="hide"
     @focusin="show"
     @focusout="hide"
+    @touchstart.passive="onTouchStart"
   >
     <slot>{{ label }}</slot>
     <Teleport to="body">
