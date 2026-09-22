@@ -41,9 +41,16 @@ jobs:
       - name: 整理要发布的文件
         run: |
           mkdir -p _site
-          cp dist-single/index.html _site/index.html
-          cp outputs/校园内容.js _site/ 2>/dev/null || true
-          cp outputs/如何添加内容.md _site/ 2>/dev/null || true
+          # 注意：要发布的是「单文件版」（JS/CSS 已内联进 HTML），
+          # 不是 dist-single/index.html —— 那个只有 700 多字节，引用外部 app.js / app.css，
+          # 直接发布会白屏。
+          cp "outputs/星河实验学园.html" _site/index.html
+          cp "outputs/校园内容.js" _site/ 2>/dev/null || true
+          cp "outputs/如何添加内容.md" _site/ 2>/dev/null || true
+          size=$(stat -c%s _site/index.html)
+          echo "发布首页大小：$size 字节"
+          # 单文件版应当有几百 KB；太小说明没内联，直接让这一步失败，避免又发布一个白屏页面
+          test "$size" -gt 100000
 
       - uses: actions/upload-pages-artifact@v3
         with:
