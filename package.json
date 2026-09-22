@@ -12,6 +12,7 @@
     "build": "vue-tsc --noEmit -p tsconfig.json && vite build",
     "build:single": "vue-tsc --noEmit -p tsconfig.json && node scripts/build-single-file.mjs",
     "content:init": "node scripts/init-content.mjs",
+    "check:content": "node scripts/check-content.mjs",
     "preview": "vite preview",
     "typecheck": "vue-tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
