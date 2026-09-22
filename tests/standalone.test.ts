@@ -66,10 +66,15 @@ describe('单文件版（桌面双击打开）', () => {
       const htmlPath = resolve(dir, '星河实验学园.html')
       const contentPath = resolve(dir, '校园内容.js')
       copyFileSync(FILE, htmlPath)
-      // 模拟用户把示例的注释去掉（只启用一门课，便于断言）
+      // 模拟用户「复制一段就是一条」的用法：一次加两门课 + 两条校规
+      const course = (id: string, name: string, icon: string) =>
+        `    {\n      id: '${id}',\n      name: '${name}',\n      icon: '${icon}',\n      desc: '来自桌面的课程',\n      category: '特色课程',\n      subject: 'science',\n      teacherRequired: 1,\n      slotCost: 1,\n      capacity: 40,\n      teachingCostPerStudentMinute: 0.001,\n      growth: { research: 0.01 },\n      requires: { buildings: { teachingBuilding: 1 } },\n    },\n`
+      const policy = (id: string, name: string) =>
+        `    {\n      id: '${id}',\n      name: '${name}',\n      icon: '📋',\n      desc: '来自桌面的校规',\n      category: '管理',\n      effects: [{ target: 'exam_score', op: 'mul', value: 0.05 }],\n      tags: ['管理'],\n    },\n`
       const template = readFileSync(CONTENT_FILE, 'utf8')
       const enabled = template
-        .replace("  courses: [\n", '  courses: [\n    {\n      id: \'desktopTestCourse\',\n      name: \'桌面测试课程\',\n      icon: \'🧪\',\n      desc: \'来自桌面的课程\',\n      category: \'特色课程\',\n      subject: \'science\',\n      teacherRequired: 1,\n      slotCost: 1,\n      capacity: 40,\n      teachingCostPerStudentMinute: 0.001,\n      growth: { research: 0.01 },\n      requires: { buildings: { teachingBuilding: 1 } },\n    },\n')
+        .replace('  courses: [\n', `  courses: [\n${course('desktopTestCourse', '桌面测试课程', '🧪')}${course('desktopTestCourse2', '桌面测试课程二', '🔬')}`)
+        .replace('  policies: [\n', `  policies: [\n${policy('desktopTestPolicy', '桌面测试校规')}${policy('desktopTestPolicy2', '桌面测试校规二')}`)
       writeFileSync(contentPath, enabled, 'utf8')
 
       const dom = new JSDOM(readFileSync(htmlPath, 'utf8'), {
@@ -79,11 +84,18 @@ describe('单文件版（桌面双击打开）', () => {
         url: `file:///${htmlPath.replace(/\\/g, '/')}`,
       })
       await new Promise((resolvePromise) => setTimeout(resolvePromise, 900))
-      const academy = (dom.window as unknown as { academy?: { content: () => { count: number; found: boolean } } }).academy
+      const academy = (
+        dom.window as unknown as {
+          academy?: { content: () => { count: number; found: boolean; byKind: Record<string, number> } }
+        }
+      ).academy
       expect(academy).toBeDefined()
       const status = academy!.content()
       expect(status.found).toBe(true)
-      expect(status.count).toBeGreaterThanOrEqual(1)
+      // 复制出来的两条都要生效（不是只认第一条）——byKind 的键是中文类别名
+      expect(status.byKind['课程']).toBe(2)
+      expect(status.byKind['校规']).toBe(2)
+      expect(status.count).toBeGreaterThanOrEqual(4)
       dom.window.close()
     },
   )

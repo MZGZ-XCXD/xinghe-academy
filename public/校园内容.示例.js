@@ -10,6 +10,9 @@
  *    2. 把下面任意示例前面的 "//" 去掉，改成你想要的名字与数值。
  *    3. 保存，然后刷新浏览器里的游戏页面，新内容会立刻出现在对应面板里。
  *    4. 游戏【选项】面板底部会显示「外部内容：已加载 N 项」，N 变了就说明生效了。
+ *    5. 想多加几条？把一整段示例（连最后一行的逗号 , 一起）复制一份，粘贴在它下面，
+ *       只要把 id 改成不重复的名字（第二门课就叫 xxx2），再改 name 与数值就行。
+ *       要 5 门课就复制 5 段，要 3 条校规就复制 3 段 —— 每个类别都是一个列表，可以放任意多条。
  *
  *  注意：
  *    · 这个文件必须和游戏 HTML 放在同一个文件夹，文件名必须是「校园内容.js」。
@@ -37,6 +40,10 @@ window.__ACADEMY_CONTENT__ = {
    *  growth / output 的单位是「每个游戏日」，实际效果会按覆盖到的学生人数折算。
    */
   courses: [
+    // ★ 想多加几门课：把下面「示例 1」整段复制一份贴在它下面，改掉 id 与 name 即可。
+    //   （id 不能重复：第一门是 teaCeremonyCourse，第二门就叫 flowerArrangingCourse）
+
+    // 示例 1：茶道与礼法
     // {
     //   id: 'teaCeremonyCourse',
     //   name: '茶道与礼法',
@@ -54,6 +61,24 @@ window.__ACADEMY_CONTENT__ = {
     //   requires: { buildings: { artsBuilding: 1 } },
     //   tags: ['culture'],
     // },
+
+    // 示例 2：花道与插花（就是复制示例 1 改出来的，字段可以比示例 1 少，只要有 id / name / icon / desc 等必需项）
+    // {
+    //   id: 'flowerArrangingCourse',
+    //   name: '花道与插花',
+    //   icon: '💐',
+    //   desc: '一节课只做一件事：把一枝花放进瓶里，放得好看。',
+    //   category: '特色课程',
+    //   subject: 'arts',
+    //   teacherRequired: 1,
+    //   slotCost: 1,
+    //   capacity: 60,
+    //   teachingCostPerStudentMinute: 0.003,
+    //   growth: { arts: 0.01, creativity: 0.012, satisfaction: 0.01 },
+    //   output: { culture: 5 },
+    //   requires: { buildings: { artsBuilding: 1 } },
+    //   tags: ['culture'],
+    // },
   ],
 
   /* ==========================================================================
@@ -62,6 +87,10 @@ window.__ACADEMY_CONTENT__ = {
    *  effects 的 op：'mul' 是百分比（0.1 = +10%），'add' 是固定值。
    */
   policies: [
+    // ★ 想多加几条校规：把下面「示例 1」整段复制一份贴在它下面，改掉 id 与 name 即可。
+    //   校规名额有限（默认 2 条，随传承/科技提升），所以多写几条备用、临场挑着用是常见玩法。
+
+    // 示例 1：课堂手机集中管理（有好处也有代价）
     // {
     //   id: 'noPhoneInClass',
     //   name: '课堂手机集中管理',
@@ -74,12 +103,28 @@ window.__ACADEMY_CONTENT__ = {
     //   ],
     //   tags: ['管理'],
     // },
+
+    // 示例 2：早自习签到制
+    // {
+    //   id: 'morningCheckIn',
+    //   name: '早自习签到制',
+    //   icon: '🌅',
+    //   desc: '七点半到教室签到，迟到要在门口站一分钟。',
+    //   category: '学生',
+    //   effects: [
+    //     { target: 'exam_score', op: 'mul', value: 0.04 },
+    //     { target: 'student_stress', op: 'mul', value: 0.08 },
+    //     { target: 'satisfaction_rate', op: 'mul', value: -0.03 },
+    //   ],
+    //   tags: ['学生'],
+    // },
   ],
 
   /* ==========================================================================
    * 三、科技（出现在【科技】面板的对应分支）
    * ========================================================================== */
   techs: [
+    // 想多加几项科技：整段复制，改 id / name，并用 requires: ['前置科技id'] 串起来。
     // {
     //   id: 'greenCampus',
     //   name: '绿色校园计划',
@@ -102,6 +147,7 @@ window.__ACADEMY_CONTENT__ = {
    *  浮窗会自动把它们显示成「代价：…／获得：…／学生：…」。
    */
   events: [
+    // 想多加几个事件：整段复制，改 id / title（写完可以在控制台用 academy.problems() 自检）。
     // {
     //   id: 'morningBell',
     //   title: '清晨的第一声铃',
@@ -135,6 +181,7 @@ window.__ACADEMY_CONTENT__ = {
    * 五、建筑（出现在【建筑】面板；前置条件没满足时不会显示）
    * ========================================================================== */
   buildings: [
+    // 想多加几栋楼：整段复制，改 id / name；requires 里可以写前置建筑或科技。
     // {
     //   id: 'greenhouse',
     //   name: '校园温室',
@@ -161,6 +208,7 @@ window.__ACADEMY_CONTENT__ = {
    * 六、社团 / 部活（出现在【社团】面板）
    * ========================================================================== */
   clubs: [
+    // 想多加几个社团：整段复制，改 id / name，并给 requires 写清楚前置条件。
     // {
     //   id: 'railwayClub',
     //   name: '铁道研究会',
@@ -190,6 +238,7 @@ window.__ACADEMY_CONTENT__ = {
    *  赛事阶梯（共享）：邻校友谊赛 → 区级 → 市级 → 省级 → 全国 → 国际邀请赛。
    */
   teams: [
+    // 想多加几支校队：整段复制，改 id / nickname / shortName（校队名 = 学校名 + 后缀 + 队）。
     // {
     //   id: 'myKendoTeam',
     //   name: '星河·竹风',
@@ -219,6 +268,7 @@ window.__ACADEMY_CONTENT__ = {
    * 七、比赛 / 交流 / 校园活动（出现在【活动】或【交流】面板）
    * ========================================================================== */
   activities: [
+    // 想多加几个活动：整段复制，改 id / name；kind 决定它出现在【活动】还是【交流】面板。
     // {
     //   id: 'cityDebateCup',
     //   name: '全市辩论赛',
@@ -248,6 +298,7 @@ window.__ACADEMY_CONTENT__ = {
    * 八、效果卡（比赛 / 交流 / 事件后三选一时可能出现）
    * ========================================================================== */
   cards: [
+    // 想多加几张效果卡：整段复制，改 id / name / desc 与持续时间。
     // {
     //   id: 'springFestivalCard',
     //   name: '春日社团祭',
@@ -270,6 +321,7 @@ window.__ACADEMY_CONTENT__ = {
    *  s.statistics.flags.myDebateWin、s.resources.money 等等。
    */
   achievements: [
+    // 想多加几个成就：整段复制，改 id / name，并把 check 改成你要的条件。
     // {
     //   id: 'firstCustomWin',
     //   name: '第一位自定义冠军',
@@ -286,6 +338,7 @@ window.__ACADEMY_CONTENT__ = {
    * 十、传承节点（学园传承后永久强化）
    * ========================================================================== */
   legacyNodes: [
+    // 想多加几个传承节点：整段复制，改 id / name；branch 决定它在传承树的哪一支。
     // {
     //   id: 'legacyGarden',
     //   name: '花园传统',
@@ -304,6 +357,7 @@ window.__ACADEMY_CONTENT__ = {
    * 十一、建筑联动（同时满足若干建筑等级时生效）
    * ========================================================================== */
   synergies: [
+    // 想多加几条建筑联动：整段复制，改 id 与两个建筑 id（这是纯加成，没有名称字段）。
     // {
     //   id: 'greenChain',
     //   name: '绿色实验链',
