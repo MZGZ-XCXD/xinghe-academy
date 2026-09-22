@@ -4,6 +4,9 @@
   "version": "0.1.0",
   "type": "module",
   "description": "《星河实验学园》— 中文网页放置经营游戏（高中校园经营）",
+  "engines": {
+    "node": "^22.22.2 || >=24.15.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit -p tsconfig.json && vite build",

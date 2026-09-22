@@ -22,8 +22,12 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          # jsdom 30 / undici 8 要求 Node ^22.22.2 || ^24.15.0 || >=26，Node 20 会让 jsdom 加载失败
+          node-version: 24
           cache: npm
+
+      - name: 环境信息
+        run: node -v && npm -v
 
       - name: 安装依赖
         run: npm ci
