@@ -1,0 +1,56 @@
+name: 部署《星河实验学园》到 GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 跑测试（核心逻辑回归）
+        run: npm test
+
+      - name: 打包单文件版
+        run: npm run build:single
+
+      - name: 整理要发布的文件
+        run: |
+          mkdir -p _site
+          cp dist-single/index.html _site/index.html
+          cp outputs/校园内容.js _site/ 2>/dev/null || true
+          cp outputs/如何添加内容.md _site/ 2>/dev/null || true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

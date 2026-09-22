@@ -1,0 +1,29 @@
+{
+  "name": "xinghe-experiment-academy",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "《星河实验学园》— 中文网页放置经营游戏（高中校园经营）",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit -p tsconfig.json && vite build",
+    "build:single": "vue-tsc --noEmit -p tsconfig.json && node scripts/build-single-file.mjs",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.2",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/test-utils": "^2.5.1",
+    "jsdom": "^30.1.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.0.7",
+    "vitest": "^3.2.7",
+    "vue-tsc": "^2.2.0"
+  }
+}

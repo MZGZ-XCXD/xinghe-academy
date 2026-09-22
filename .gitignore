@@ -1,0 +1,11 @@
+node_modules
+dist
+dist-single
+.npm-cache
+dev-server*.log
+verify*.log
+work/
+.tmp
+*.local
+.DS_Store
+vite.config.ts.timestamp-*
