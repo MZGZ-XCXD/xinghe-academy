@@ -7,6 +7,7 @@
 
 ```bash
 npm install
+npm run content:init   # 可选：生成你自己的 public/校园内容.js（个性化内容，不会被提交）
 npm run dev      # 开发服务器（默认 http://localhost:5173）
 npm run build    # 类型检查 + 生产构建（输出到 dist/）
 npm run build:single   # 打包成单文件 HTML（输出到 outputs/星河实验学园.html）
@@ -15,6 +16,8 @@ npm test         # 运行全部自动化测试（Vitest）
 ```
 
 构建产物是纯静态文件，可直接部署到 GitHub Pages 或任意静态服务器（`vite.config.ts` 中 `base: './'`，支持子目录部署）。不需要后端。
+
+版本历史见 [更新日志（CHANGELOG.md）](CHANGELOG.md)。
 
 ### 单文件版（可以放桌面双击打开）
 
@@ -32,6 +35,8 @@ npm run build:single
 ## 自定义内容（不改引擎）
 
 **最简单的方式（桌面上就能改，不用重新打包）**：把游戏 HTML 与 `校园内容.js` 放在同一个文件夹，直接在 `校园内容.js` 里写内容，保存后刷新页面即可。格式说明、逐字段示例与排错表见 [如何添加内容.md](templates/如何添加内容.md)（打包时会和游戏一起生成到 `outputs/`）。游戏内【选项】面板底部会显示「已加载 N 项」，按 F12 也能用 `academy.content()` 查看加载情况。
+
+**你的内容不会被上传**：`校园内容.js` 被 `.gitignore` 排除在仓库之外（仓库里只有公开模板 `public/校园内容.示例.js`），所以在里面加的东西只留在你本机，`git push` 不会带上它。本地开发时如果想用自己那份，执行一次 `npm run content:init` 把模板复制成 `public/校园内容.js` 再编辑；`npm run build:single` 会优先用你这份（有就用你的，没有就用模板）。
 
 **改工程里的方式**：编辑下面这个文件（开发模式用）：
 

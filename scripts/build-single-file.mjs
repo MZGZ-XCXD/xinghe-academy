@@ -88,9 +88,13 @@ writeFileSync(targetFile, html, 'utf8')
 writeFileSync(resolve(outDir, '星河实验学园.html'), html, 'utf8')
 
 // 一起产出「内容入口」与教程，方便放到桌面
-const contentTemplate = resolve(root, 'public/校园内容.js')
-if (existsSync(contentTemplate)) {
-  writeFileSync(resolve(targetDir, '校园内容.js'), readFileSync(contentTemplate, 'utf8'), 'utf8')
+// 优先用玩家自己的 public/校园内容.js（本地个性化内容，已被 .gitignore 忽略），
+// 没有就用仓库里公开的模板 public/校园内容.示例.js。
+const personalContent = resolve(root, 'public/校园内容.js')
+const exampleContent = resolve(root, 'public/校园内容.示例.js')
+const contentSource = existsSync(personalContent) ? personalContent : exampleContent
+if (existsSync(contentSource)) {
+  writeFileSync(resolve(targetDir, '校园内容.js'), readFileSync(contentSource, 'utf8'), 'utf8')
   console.log('③ 已生成内容入口：outputs/校园内容.js')
 }
 const tutorial = resolve(root, 'templates/如何添加内容.md')

@@ -14,6 +14,10 @@
 
 编辑完可以在【选项】面板底部看到「自定义内容：已加载 N 项」，或在控制台执行 `academy.content()` / `academy.problems()`。
 
+> **这份文件不会被上传**：`校园内容.js` 已被 `.gitignore` 排除，仓库里只保留公开模板 `public/校园内容.示例.js`。
+> 在工程里开发时（`npm run dev`），执行一次 `npm run content:init` 会把它复制成 `public/校园内容.js`——那是**你自己的副本**，`git status` 里看不到，`git push` 也不会带上；
+> `npm run build:single` 打包时会优先用你这份（没有才用模板）。所以放开了加内容，不用担心泄露。
+
 ## 一、在工程里改（开发模式）
 
 所有内容都是数据驱动的。你也可以只编辑一个源码文件：
